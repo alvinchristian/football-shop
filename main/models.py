@@ -7,4 +7,5 @@ class Products(models.Model):
     thumbnail = models.URLField()
     category = models.CharField(max_length=15)
     is_featured = models.BooleanField(default=False)
+    brand = models.CharField(max_length=10)
 # Create your models here.
