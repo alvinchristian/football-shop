@@ -96,7 +96,8 @@ Untuk melakukan deployment ke PWS, pertama saya membuat proyek baru bernama full
 Ketika seorang user membuka aplikasi django, maka browser akan mengirim sebuah `get` request. Sebuah get request dapat dianggap sebagai permintaan dari browser untuk mengambil sesuatu dari server. 
 
 ![request](/images/request.png)
-#### ref:https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Django/Introduction
+
+ref:https://developer.mozilla.org/en-US/docs/Learn_web_development/Extensions/Server-side/Django/Introduction
 
 Server akan menerima request tersebut dan "check" file `urls.py` untuk menentukan views mana yang tepat
 
