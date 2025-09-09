@@ -80,6 +80,10 @@ urlpatterns = [
     path('', show_template, name='show_template'),
 ]
 ```
+
+Untuk penjelasan lebi lengkap ada di bagian berikutnya
+
+
 7. Melakukan deployment ke PWS terhadap aplikasi yang sudah dibuat sehingga nantinya dapat diakses oleh teman-temanmu melalui Internet.
 
 Untuk melakukan deployment ke PWS, pertama saya membuat proyek baru bernama fulltimegear di pws, lalu saya tambahkan env variabel saya ke PWS agar dapat digunakan oleh website saya. Setelah itu saya tambahkan url `alvin-christian-fulltimegear.pbp.cs.ui.ac.id` ke AllOWED_HOST di `settings.py` agar aplikasi webnya mengenali url deployment PWS. Setelah itu tinggal jalankan perintah deployment yang ditunjukkan di PWS.
@@ -87,7 +91,13 @@ Untuk melakukan deployment ke PWS, pertama saya membuat proyek baru bernama full
 
 ## Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
 
-Ketika seorang user membuka aplikasi django, maka browser akan mengirim sebuah `get` request. Sebuah get request dapat dianggap sebagai permintaan dari browser untuk mengambil sesuatu dari server. Server akan menerima request tersebut dan "check" file `urls.py` untuk menentukan views mana yang tepat
+![flow](/images/basic-django.png)
+
+Ketika seorang user membuka aplikasi django, maka browser akan mengirim sebuah `get` request. Sebuah get request dapat dianggap sebagai permintaan dari browser untuk mengambil sesuatu dari server. 
+
+![request](/images/request.png)
+
+Server akan menerima request tersebut dan "check" file `urls.py` untuk menentukan views mana yang tepat
 
 ```python
 urlpatterns = [
@@ -119,7 +129,12 @@ def show_template(request):
     return render(request, "template.html", context)
 ```
 
-kode ini mengambil file `template.html` lalu merendernya dan mereturnnya. Server kemudian mengembalikan hasil html yang dirender dan juga sebuah kode ke client untuk ditampilkan ke pengguna. Kode ini untuk memberi tahu ke client status dariaksi, apakah berhasil atau gagal, dan jika gagal, mengapa. Tentu kita bisa menambahkan endpoint lain yang akan melakukanaksi lain tapi konsepnya tetap sama. Contoh jika kita ingin menulis atau membaca suatu data model, maka response akan diteruskan dari view ke `models.py` dimana kita dapat mengambil atau menulis data ke model yang ada di aplikasi. Setelah itu, tergantung bagaimana kita mensetup routing, kita dapat merender/mengupdate html baru dan mengembalikannya ke client.
+kode ini mengambil file `template.html` lalu merendernya dan mereturnnya. Server kemudian mengembalikan hasil html yang dirender dan juga sebuah kode ke client untuk ditampilkan ke pengguna. Kode ini untuk memberi tahu ke client status dariaksi, apakah berhasil atau gagal, dan jika gagal, mengapa. 
+
+![response](/images/response.png)
+
+
+Tentu kita bisa menambahkan endpoint lain yang akan melakukanaksi lain tapi konsepnya tetap sama. Contoh jika kita ingin menulis atau membaca suatu data model, maka response akan diteruskan dari view ke `models.py` dimana kita dapat mengambil atau menulis data ke model yang ada di aplikasi. Setelah itu, tergantung bagaimana kita mensetup routing, kita dapat merender/mengupdate html baru dan mengembalikannya ke client.
 
 ## Jelaskan peran settings.py dalam proyek Django!
 
