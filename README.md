@@ -1,5 +1,7 @@
 # football-shop
 
+Link : https://alvin-christian-fulltimegear.pbp.cs.ui.ac.id/
+
 ## Memenuhi checklist
 1. Membuat sebuah proyek Django baru
 
@@ -82,6 +84,58 @@ urlpatterns = [
 
 Untuk melakukan deployment ke PWS, pertama saya membuat proyek baru bernama fulltimegear di pws, lalu saya tambahkan env variabel saya ke PWS agar dapat digunakan oleh website saya. Setelah itu saya tambahkan url `alvin-christian-fulltimegear.pbp.cs.ui.ac.id` ke AllOWED_HOST di `settings.py` agar aplikasi webnya mengenali url deployment PWS. Setelah itu tinggal jalankan perintah deployment yang ditunjukkan di PWS.
 
+
+## Buatlah bagan yang berisi request client ke web aplikasi berbasis Django beserta responnya dan jelaskan pada bagan tersebut kaitan antara urls.py, views.py, models.py, dan berkas html.
+
+Ketika seorang user membuka aplikasi django, maka browser akan mengirim sebuah `get` request. Sebuah get request dapat dianggap sebagai permintaan dari browser untuk mengambil sesuatu dari server. Server akan menerima request tersebut dan "check" file `urls.py` untuk menentukan views mana yang tepat
+
+```python
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('main.urls')),
+]
+```
+
+dalam kasus aplikasi saya, karena by default ketika membuka aplikasi akan berada di root URL, maka request akan diteruskan ke urls di aplikasi main, namun jika saya mengunjungi endpoin admin maka request akan diteruskan ke urls di admin.site. Untuk seterusnya saya akan gunakan main.urls sebagai contoh.
+
+Di dalam urls di main ada potongan kode ini
+
+```python
+urlpatterns = [
+    path('', show_template, name='show_template'),
+]
+```
+
+Karena kita berada di root URL, maka fungsi yang akan dipanggil adalah `show_template` dari `views.py` di aplikasi main.show_template memiliki kode berikut
+
+```python
+def show_template(request):
+    context = {
+        'shop': 'Full Time Gear',
+        'name': 'Alvin Christian Halim',
+        'class': 'PBP F'
+    }
+
+    return render(request, "template.html", context)
+```
+
+kode ini mengambil file `template.html` lalu merendernya dan mereturnnya. Server kemudian mengembalikan hasil html yang dirender dan juga sebuah kode ke client untuk ditampilkan ke pengguna. Kode ini untuk memberi tahu ke client status dariaksi, apakah berhasil atau gagal, dan jika gagal, mengapa. Tentu kita bisa menambahkan endpoint lain yang akan melakukanaksi lain tapi konsepnya tetap sama. Contoh jika kita ingin menulis atau membaca suatu data model, maka response akan diteruskan dari view ke `models.py` dimana kita dapat mengambil atau menulis data ke model yang ada di aplikasi. Setelah itu, tergantung bagaimana kita mensetup routing, kita dapat merender/mengupdate html baru dan mengembalikannya ke client.
+
+## Jelaskan peran settings.py dalam proyek Django!
+
+Sesuai namanya, `settings.py` merupakan kode yang menentukan konfigurasi dari aplikasi kita. Kode settings ini sebenarnya hanya merupakan sekumpulan variabel yang akan digunakan oleh aplikasi kita. Sebagai contoh, ada variabel `SECRET_KEY`, value yang kita assign ke variabel ini akan menjadi secret key yang digunakan oleh aplikasi kita untuk kegiatan kriptografi seperti signing. Variabel `ALLOWED_HOSTS` akan mendefinisikan host mana saja yang dimana aplikasi kita dapat ditampilkan (ref: https://docs.djangoproject.com/en/5.2/ref/settings/#allowed-hosts). Masih ada banyak lagi variabel yang kita bisa setting di file `settings.py`, untuk dokumentasi lengkapnya bisa lihat di https://docs.djangoproject.com/en/5.2/ref/settings/#
+
+## Bagaimana cara kerja migrasi database di Django?
+
+Pada saat kita melakukan perubahan pada model, maka kita perlu mengupdate database kita agar semua sinkron, proses ini bernama migration. Ketika ingin melakukan migration, kita dapat mulai dengan menjalankan perintah `python manage.py makemigrations`. Django akan scan model kita dan bandingkan dengan versi sebelumnya yang disimpan di file migrasi kita. Jika ada perbedaan, maka Django akan membuat file migrasi baru yang berisi perubahan yang ada. Ini bisa dibilang mirip dengansistem version control dari git. Kemudian kita dapat jalankan `python manage.py migrate` untuk mulai proses migrasi, tinggal tunggu sampai prosesnya kelar (ref: https://docs.djangoproject.com/en/5.2/topics/migrations/#migration-files)
+
+## Menurut Anda, dari semua framework yang ada, mengapa framework Django dijadikan permulaan pembelajaran pengembangan perangkat lunak?
+
+Menurut saya, alasan pertama adalah karena Django merupakan framework python, yang merupakan bahasa yang paling simpel dibanding bahasa-bahasa lain seperti php, javascript, dll. Kedua Django juga bagus untuk pengenalan design arkitektur, khususnya MVT, karena flownya jelas dan terstruktur. Terakhir, proses dari membuat proyek sampai mendeploy relatif mudah karena Django sudah memberikan cara untuk automasi seperti startapp, startproject, migrate, makemigrations, runserver, dll.
+
+## Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
+
+Mungkin dari saya belum ada karena dari materi tutorial sudah sangat membantu dan saya belum ketemu kendala apa-apa.
 
 
 
