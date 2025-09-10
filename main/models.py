@@ -20,7 +20,7 @@ class Products(models.Model):
     thumbnail = models.URLField()
     category = models.CharField(max_length=20, choices=Category_Choices)
     is_featured = models.BooleanField(default=False)
-    brand = models.CharField(max_length=10)
+    brand = models.CharField(max_length=10,default='')
     sold = models.IntegerField(default=0)
 
     def __str__(self):
