@@ -25,22 +25,43 @@ thumbnail sebagai gambar item dengan tipe URLField.
 category sebagai kategori item dengan tipe CharField.
 is_featured sebagai status unggulan item dengan tipe BooleanField.</br>
 
-Untuk proyek kali ini saya menambahkan atribut `brand` yang bertipe `CharField`
+Untuk proyek kali ini saya menambahkan atribut `brand` yang bertipe `CharField` dan juga atribut `sold` yang bertipe `IntegerField` untuk menunjukkan berapa banyak dari produk tertentu sudah terjual
 
 Untuk mengimplementasikannya, cukup menambahkan kode ini ke `models.py` di aplikasi `main`.
 
 ```python
-class Products(models.Model):
+    Category_Choices = [
+        ('topwear', 'Top Wear'),
+        ('bottomwear', 'Bottom Wear'),
+        ('shoes', 'Shoes'),
+        ('gloves', 'Gloves'),
+        ('accessories', 'Accessories'),
+        ('socks', 'Socks'),
+        ('trainingequipment', 'Training Equipment'),
+        ('ball', 'Ball'),
+        ('bag', 'Bag'),
+    ]
+
     name = models.CharField(max_length=30)
     price = models.IntegerField()
     description = models.TextField()
     thumbnail = models.URLField()
-    category = models.CharField(max_length=15)
+    category = models.CharField(max_length=20, choices=Category_Choices)
     is_featured = models.BooleanField(default=False)
     brand = models.CharField(max_length=10)
+    sold = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.name
+    
+    def add_sold(self, quantity):
+        self.sold += quantity
+        self.save()
 ```
 
-Kode ini akan membuat sebuah model bernama Products lewat kata kunci models.Model, lalu akan membuat atribut `name` dengan tipe `CharField` dan panjang maksimal 30 karakter, `price` dengan tipe `IntegerField`, `description` dengan tipe `Textfield`, `thumbnail` dengan tipe `URLField`, `category` dengan tipe `CharField` dan panjang maksimal 15 karakter, `is_featured` dengan tipe data `boolean` dimana nilai defaultnya adalah False, dan `brand` dengan tipe data `CharField` dan panjang maksimal 10
+Kode ini akan membuat sebuah model bernama Products lewat kata kunci models.Model, lalu akan membuat atribut `name` dengan tipe `CharField` dan panjang maksimal 30 karakter, `price` dengan tipe `IntegerField`, `description` dengan tipe `Textfield`, `thumbnail` dengan tipe `URLField`, `category` dengan tipe `CharField` dan panjang maksimal 20 karakter dan pilihan dari `Category_Choices`, `is_featured` dengan tipe data `boolean` dimana nilai defaultnya adalah False, `brand` dengan tipe data `CharField` dan panjang maksimal 10, dan `sold` dengan tipe data `IntegerField`
+
+setelah itu ada fungsi `__str__` yang digunakan untuk mengembalikan nama dari model, dan fungsi `add_sold` yang berfungsi untuk menambah nilai atribut `sold`
 
 5. Membuat sebuah fungsi pada views.py untuk dikembalikan ke dalam sebuah template HTML yang menampilkan nama aplikasi serta nama dan kelas kamu.
 
