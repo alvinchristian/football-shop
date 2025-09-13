@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .product-card {
+            width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .product-card h2 {
+            margin: 10px 0;
+        }
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: green;
+        }
+        .featured {
+            color: #fff;
+            background: crimson;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .add-button {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: dodgerblue;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .add-button:hover {
+            background: royalblue;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Single Product -->
+    <div class="product-card">
+        <img src="{{ product.thumbnail }}" alt="{{ product.name }}">
+        <h2>{{ product.name }}
+            {% if product.is_featured %}
+                <span class="featured">Featured</span>
+            {% endif %}
+        </h2>
+        <p class="price">Rp {{ product.price }}</p>
+        <p><strong>Stock:</strong> {{ product.stock }}</p>
+        <p><strong>Category:</strong> {{ product.get_category_display }}</p>
+        <p><strong>Brand:</strong> {{ product.brand }}</p>
+        <p><strong>Sold:</strong> {{ product.sold }}</p>
+        <p><strong>Description:</strong></p>
+        <p>{{ product.description }}</p>
+
+    </div>
+</body>
+</html>
