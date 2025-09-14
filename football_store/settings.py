@@ -33,7 +33,9 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "alvin-christian-fulltimegear.pbp.cs.ui.ac.id"]
 
-
+CSRF_TRUSTED_ORIGINS = [
+    "https://alvin-christian-fulltimegear.pbp.cs.ui.ac.id"
+]
 # Application definition
 
 INSTALLED_APPS = [
