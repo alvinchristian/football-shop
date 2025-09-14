@@ -1,5 +1,5 @@
 from django.db import models
-
+import uuid
 class Products(models.Model):
 
     Category_Choices = [
@@ -14,6 +14,7 @@ class Products(models.Model):
         ('bag', 'Bag'),
     ]
 
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=30)
     price = models.IntegerField()
     description = models.TextField()
