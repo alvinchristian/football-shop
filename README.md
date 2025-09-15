@@ -2,6 +2,8 @@
 
 Link : https://alvin-christian-fulltimegear.pbp.cs.ui.ac.id/
 
+
+# Tugas 2
 ## Memenuhi checklist
 1. Membuat sebuah proyek Django baru
 
@@ -175,6 +177,419 @@ Menurut saya, alasan pertama adalah karena Django merupakan framework python, ya
 ## Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
 
 Mungkin dari saya belum ada karena dari materi tutorial sudah sangat membantu dan saya belum ketemu kendala apa-apa.
+
+
+# Tugas 3
+## Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
+
+Sebuah platform tidak dapat berjalan tanpa adanya data, dan kita perlu sebuah cara untuk memindahkan data dari satu tempat ke tempat lain. Inilah gunanya data delivery, sebagai contoh misalkan sebuah platform menyimpan data dari produk yaitu nama, harga, dan stok. Data ini disimpan di database, ketika seorang user mengunjungi webstie tersebut untuk melihat produk, website harus dapat menampilkan data-data dari produk tersebut. Jadi harus ada perpindahan data dari database ke frontend untuk ditampilkan
+
+## Menurutmu, mana yang lebih baik antara XML dan JSON? Mengapa JSON lebih populer dibandingkan XML?
+
+Saya pribadi lebih suka JSON karena lebih simpel untuk ditulis dan dibaca. JSON lebih populer karena lebih ringan dibanting XML sehingga dapat di-parse lebih cepat. (ref : https://www.geeksforgeeks.org/html/difference-between-json-and-xml/)
+
+## Jelaskan fungsi dari method is_valid() pada form Django dan mengapa kita membutuhkan method tersebut?
+
+method is_valid() digunakan untuk ngecek apakah input form tersebut sesuai atau tidak dengan model yang ditentukan. Sebagai contoh, jika atribut nama memiliki maksimal panjang 10 char, dan ada yang input lebih dari 10 char maka method is_valid() akan mereturn false dan form tidak dapat disubmit. Sama juga jika pengguna tidak mengisi bagian yang wajib, seperti jika mencoba register tanpa memasukkan username atau password.
+
+## Mengapa kita membutuhkan csrf_token saat membuat form di Django? Apa yang dapat terjadi jika kita tidak menambahkan csrf_token pada form Django? Bagaimana hal tersebut dapat dimanfaatkan oleh penyerang?
+
+Cross-site request forgery (CSRF) merupakan sebuah serangan dimana seorang penyerang dapat mengirimkan request yang berbahaya atas nama pengguna. CSRF dapat terjadi ketika seorang user sedang logged in ke sebuah aplikasi. Untuk menjaga session, aplikasi web akan membuat cookie. Hal yang penting untuk dicatat adalah ketika kita mengirim sebuah request ke aplikasi tersebut, cookie akan secara otomatis dikirim juga ke server. 
+
+Misalkan user sedang logged in ke aplikasi bank. Lalu dia pergi ke website lain yang ternyata dibuat oleh penyerang. Saat di website tersebut, ternyata website mengirim sebuah request ke aplikasi bank untuk mengganti password. Karena cookienya juga dikirim maka web bank menggangap bahwa user tersebut yang ingin mengganti password
+
+![csrf](/images/csrf.svg)
+
+CSRF token merupakan sebuah token random yang digunakan untuk mencegah CSRF. CSRF Ketika user mengirim form, maka CSRF token tersebut juga akan dikirm ke server, biasanya lewat hidden field di html dengan metode POST. Server akan cek apakah token tersebut sesuai, jika iya maka aksi tersebut akan dilakukan. Namun jika tidak maka aksi tersebut akan direject (ref: https://portswigger.net/web-security/csrf)
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+1.  Tambahkan 4 fungsi views baru untuk melihat objek yang sudah ditambahkan dalam format XML, JSON, XML by ID, dan JSON by ID.
+
+di `views.py` saya tambahkan 4 fungsi ini
+```python
+def show_xml(request):
+    products = Products.objects.all()
+    xml_data = serializers.serialize("xml", products)
+    return HttpResponse(xml_data, content_type="application/xml")
+
+def show_json(request):
+    products = Products.objects.all()
+    json_data = serializers.serialize("json", products)
+    return HttpResponse(json_data, content_type="application/json")
+
+def show_xml_by_id(request, id):
+    products = Products.objects.get(id=id)
+    xml_data = serializers.serialize("xml", [products])
+    return HttpResponse(xml_data, content_type="application/xml")
+
+def show_json_by_id(request, id):
+    products = Products.objects.get(id=id)
+    json_data = serializers.serialize("json", [products])
+    return HttpResponse(json_data, content_type="application/json")
+```
+
+fungsi-fungsi tersebut berguna untuk menampilkan data products dalam bentuk xml (show_xml) dan json(show_json). Terdapat juga 2 fungsi untuk menampilkan data produk tertentu berdasarkan idnya dalam bentuk json (show_json_by_id) dan (show_xml_by_id)
+
+2. Membuat routing URL untuk masing-masing views yang telah ditambahkan pada poin 1.
+
+Dalam `urls.py` saya tambahkan 4 endpoint ini
+
+```python
+    path('xml/<uuid:id>/', show_xml_by_id, name='show_xml_by_id'),
+    path('json/<uuid:id>/', show_json_by_id, name='show_json_by_id'),
+    path('xml/', show_xml, name='show_xml'),
+    path('json/', show_json, name='show_json'),
+```
+
+endpoint xml digunakan untuk menampilkan data dlm xml, endpoint json untuk menampilkan dlm json, xml/<uuid:id>/ untuk menampilkan data produk dengan uuid tertenu dlm xml, dan json/<uuid:id> dalam json
+
+3.  Membuat halaman yang menampilkan data objek model yang memiliki tombol "Add" yang akan redirect ke halaman form, serta tombol "Detail" pada setiap data objek model yang akan menampilkan halaman detail objek.
+
+Catatatan bahwa semua kode html digenerate oleh AI
+
+`template.html` diubah menjadi 
+
+```html
+ {% extends 'base.html' %}
+ {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ shop }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .add-button {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 20px;
+            background: dodgerblue;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .add-button:hover { background: royalblue; }
+
+        /* Product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .product-card img {
+            width: 250px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .product-card h2 {
+            margin: 8px 0;
+            font-size: 18px;
+        }
+        .price { font-weight: bold; color: green; margin: 5px 0; }
+        .featured {
+            color: #fff;
+            background: crimson;
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-left: 6px;
+        }
+        .details-button {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: #0b5ed7;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .details-button:hover {
+            background: #084298;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ shop }}</h1>
+        <h5>Name: {{ name }}</h5>
+        <h5>Class: {{ class }}</h5>
+        <a href="{% url 'main:add_product' %}" class="add-button">➕ Add Product</a>
+    </div>
+
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product-card">
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}">
+                <h2>
+                    {{ product.name }}
+                    {% if product.is_featured %}
+                        <span class="featured">Featured</span>
+                    {% endif %}
+                </h2>
+                <p class="price">Rp {{ product.price }}</p>
+                <p><strong>Brand:</strong> {{ product.brand }}</p>
+                <p><strong>Stock:</strong> {{ product.stock }}</p>
+                <a href="{% url 'main:show_product' product.id %}" class="details-button">View Details</a>
+            </div>
+        {% empty %}
+            <p>No products available.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
+{% endblock content %}
+
+```
+
+Disini ada button dengan label Add Product yang akan redirect ke url bernama add_product (path('add/', add_product, name='add_product')) diamana kita bisa menambahkan produk. 
+
+Selain itu kita jalankan sebuah for loop untuk setiap produk dan menampilkan nama, harga, brand, dan jumblah stok
+
+```html
+        {% for product in products %}
+            <div class="product-card">
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}">
+                <h2>
+                    {{ product.name }}
+                    {% if product.is_featured %}
+                        <span class="featured">Featured</span>
+                    {% endif %}
+                </h2>
+                <p class="price">Rp {{ product.price }}</p>
+                <p><strong>Brand:</strong> {{ product.brand }}</p>
+                <p><strong>Stock:</strong> {{ product.stock }}</p>
+                <a href="{% url 'main:show_product' product.id %}" class="details-button">View Details</a>
+```
+
+ada juga button details yang akan redirect ke url bernama show_product (    path('product/<uuid:id>/', show_product, name='show_product'),)
+
+Kode untuk show_product dalam views.py adalah
+
+```python
+def show_product(request, id):
+    product = get_object_or_404(Products, id=id)
+    context = {'product': product}
+    return render(request, 'product_detail.html', context)
+```
+
+Yaitu hanya sekedar merender `product_detail.html` untuk produk dengan id tertentu. 
+
+4. Membuat halaman form untuk menambahkan objek model pada app sebelumnya.
+
+Kode dari `forms.py` adalah
+
+```python
+from django.forms import ModelForm
+from main.models import Products
+
+class ProductsForm(ModelForm):
+    class Meta:
+        model = Products
+        fields = ["name", "description", "price", "category", "thumbnail", "is_featured", "brand","stock"]
+
+
+
+```
+
+dimana forms ini akan digunakan di `add_product`
+
+```python
+def add_product(request):
+    form = ProductsForm(request.POST or None)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_template')
+    
+    context = {'form': form}
+    return render(request, 'add_product.html', context)
+
+```
+
+dengan kode html `add_product.html`
+
+```html
+ {% extends 'base.html' %}
+ {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-container form p {
+            margin-bottom: 15px;
+        }
+        .form-container button {
+            width: 100%;
+            padding: 10px;
+            background: dodgerblue;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background: royalblue;
+        }
+        .back-link {
+            display: block;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Add New Product</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save Product</button>
+        </form>
+        <a href="{% url 'main:show_template' %}" class="back-link">⬅ Back to Products</a>
+    </div>
+</body>
+</html>
+{% endblock content %}
+
+```
+
+4. Membuat halaman yang menampilkan detail dari setiap data objek model.
+
+Berikut adalah kode untuk `product_detail.html`. Kegunaan dari `product_detail.html` sudah dijelaskan di nomor 3
+
+
+```html
+ {% extends 'base.html' %}
+ {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ product.name }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .product-card {
+            width: 400px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px auto;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .product-card img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .product-card h2 {
+            margin: 10px 0;
+        }
+        .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: green;
+        }
+        .featured {
+            color: #fff;
+            background: crimson;
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .add-button {
+            display: inline-block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background: dodgerblue;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        .add-button:hover {
+            background: royalblue;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Single Product -->
+    <div class="product-card">
+        <img src="{{ product.thumbnail }}" alt="{{ product.name }}">
+        <h2>{{ product.name }}
+            {% if product.is_featured %}
+                <span class="featured">Featured</span>
+            {% endif %}
+        </h2>
+        <p class="price">Rp {{ product.price }}</p>
+        <p><strong>Stock:</strong> {{ product.stock }}</p>
+        <p><strong>Category:</strong> {{ product.get_category_display }}</p>
+        <p><strong>Brand:</strong> {{ product.brand }}</p>
+        <p><strong>Sold:</strong> {{ product.sold }}</p>
+        <p><strong>Description:</strong></p>
+        <p>{{ product.description }}</p>
+
+    </div>
+</body>
+</html>
+{% endblock content %}
+
+```
+
+Yaitu mencetak name, price, stock, category, brand, desc, dan jumblah sold
+
+
+## Mengakses keempat URL di poin 2 menggunakan Postman, membuat screenshot dari hasil akses URL pada Postman, dan menambahkannya ke dalam README.md.
+
+`/xml`
+
+![alt text](/images/xml.png)
+
+`/json`
+![alt text](/images/json.png)
+
+`/xml/7dd4b197-d4ce-4c98-978b-48ef8d52af39`
+![alt text](/images/xml-id.png)
+
+`/json/7dd4b197-d4ce-4c98-978b-48ef8d52af39`
+![alt text](/images/json-id.png)
+
 
 
 
