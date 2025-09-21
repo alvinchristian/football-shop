@@ -3,7 +3,7 @@
 Link : https://alvin-christian-fulltimegear.pbp.cs.ui.ac.id/
 
 <details>
-<summary> Tugas 2 <summary>
+<summary> Tugas 2 </summary>
 ## Memenuhi checklist
 1. Membuat sebuah proyek Django baru
 
@@ -180,7 +180,7 @@ Mungkin dari saya belum ada karena dari materi tutorial sudah sangat membantu da
 </details>
 
 <details>
-<summary> Tugas 3 <summary>
+<summary> Tugas 3 </summary>
 ## Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
 
 Sebuah platform tidak dapat berjalan tanpa adanya data, dan kita perlu sebuah cara untuk memindahkan data dari satu tempat ke tempat lain. Inilah gunanya data delivery, sebagai contoh misalkan sebuah platform menyimpan data dari produk yaitu nama, harga, dan stok. Data ini disimpan di database, ketika seorang user mengunjungi webstie tersebut untuk melihat produk, website harus dapat menampilkan data-data dari produk tersebut. Jadi harus ada perpindahan data dari database ke frontend untuk ditampilkan
@@ -593,7 +593,7 @@ Yaitu mencetak name, price, stock, category, brand, desc, dan jumblah sold
 </details>
 
 <details>
-<summary> Tugas 4 <summary>
+<summary> Tugas 4 </summary>
 </details>
 
 
