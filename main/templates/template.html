@@ -75,7 +75,11 @@
         <h1>{{ shop }}</h1>
         <h5>Name: {{ name }}</h5>
         <h5>Class: {{ class }}</h5>
-        <a href="{% url 'main:add_product' %}" class="add-button">➕ Add Product</a>
+        <a href="{% url 'main:add_product' %}" class="add-button">Add Product</a>
+        <a href="{% url 'main:logout' %}" class="add-button">Logout</a>
+        <h5>Sesi terakhir login: {{ last_login }}</h5>
+        <a href="?filter=all" class="add-button">All Products</a>
+        <a href="?filter=my" class="add-button">My Products</a>
     </div>
 
     <div class="product-grid">

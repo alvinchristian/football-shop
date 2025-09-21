@@ -2,8 +2,8 @@
 
 Link : https://alvin-christian-fulltimegear.pbp.cs.ui.ac.id/
 
-
-# Tugas 2
+<details>
+<summary> Tugas 2 <summary>
 ## Memenuhi checklist
 1. Membuat sebuah proyek Django baru
 
@@ -177,9 +177,10 @@ Menurut saya, alasan pertama adalah karena Django merupakan framework python, ya
 ## Apakah ada feedback untuk asisten dosen tutorial 1 yang telah kamu kerjakan sebelumnya?
 
 Mungkin dari saya belum ada karena dari materi tutorial sudah sangat membantu dan saya belum ketemu kendala apa-apa.
+</details>
 
-
-# Tugas 3
+<details>
+<summary> Tugas 3 <summary>
 ## Jelaskan mengapa kita memerlukan data delivery dalam pengimplementasian sebuah platform?
 
 Sebuah platform tidak dapat berjalan tanpa adanya data, dan kita perlu sebuah cara untuk memindahkan data dari satu tempat ke tempat lain. Inilah gunanya data delivery, sebagai contoh misalkan sebuah platform menyimpan data dari produk yaitu nama, harga, dan stok. Data ini disimpan di database, ketika seorang user mengunjungi webstie tersebut untuk melihat produk, website harus dapat menampilkan data-data dari produk tersebut. Jadi harus ada perpindahan data dari database ke frontend untuk ditampilkan
@@ -328,7 +329,7 @@ Catatatan bahwa semua kode html digenerate oleh AI
         <h1>{{ shop }}</h1>
         <h5>Name: {{ name }}</h5>
         <h5>Class: {{ class }}</h5>
-        <a href="{% url 'main:add_product' %}" class="add-button">➕ Add Product</a>
+        <a href="{% url 'main:add_product' %}" class="add-button">Add Product</a>
     </div>
 
     <div class="product-grid">
@@ -589,6 +590,7 @@ Yaitu mencetak name, price, stock, category, brand, desc, dan jumblah sold
 
 `/json/7dd4b197-d4ce-4c98-978b-48ef8d52af39`
 ![alt text](/images/json-id.png)
+</details>
 
 
 

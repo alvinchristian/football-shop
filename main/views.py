@@ -1,16 +1,30 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
+from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .models import Products
 from .forms import ProductsForm
+import datetime
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
 # Create your views here.
+@login_required(login_url='/login')
 def show_template(request):
-    product_list = Products.objects.all()
+    filter_type = request.GET.get('filter','all')
+    if filter_type == 'all':
+        product_list = Products.objects.all()
+    else:
+        product_list = Products.objects.filter(user=request.user)
     context = {
-        'shop': 'Full Time Gear',
-        'name': 'Alvin Christian Halim',
+        'shop': 'FullTime Gear',
+        'name': request.user.username,
         'class': 'PBP F',
-        'products': product_list
+        'products': product_list,
+        'last_login': request.COOKIES.get('last_login', 'Never')
     }
 
     
@@ -36,17 +50,52 @@ def show_json_by_id(request, id):
     json_data = serializers.serialize("json", [products])
     return HttpResponse(json_data, content_type="application/json")
 
+@login_required(login_url='/login')
 def add_product(request):
     form = ProductsForm(request.POST or None)
     if form.is_valid() and request.method == 'POST':
-        form.save()
+        product_entry = form.save(commit=False)
+        product_entry.user = request.user
+        product_entry.save()
         return redirect('main:show_template')
     
     context = {'form': form}
     return render(request, 'add_product.html', context)
 
+@login_required(login_url='/login')
 def show_product(request, id):
     product = get_object_or_404(Products, id=id)
     context = {'product': product}
     return render(request, 'product_detail.html', context)
 
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+
+def login_user(request):
+    if request.method == 'POST':
+      form = AuthenticationForm(data=request.POST)
+      if form.is_valid():
+          user = form.get_user()
+          login(request, user)
+          response = HttpResponseRedirect(reverse('main:show_template'))
+          response.set_cookie('last_login', str(datetime.datetime.now()))
+          return response
+    else:
+        form = AuthenticationForm()
+        context = {'form':form}
+        return render(request, 'login.html', context)
+
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
