@@ -15,6 +15,7 @@ from django.urls import reverse
 @login_required(login_url='/login')
 def show_template(request):
     filter_type = request.GET.get('filter','all')
+    
     if filter_type == 'all':
         product_list = Products.objects.all()
     else:
@@ -26,7 +27,6 @@ def show_template(request):
         'products': product_list,
         'last_login': request.COOKIES.get('last_login', 'Never')
     }
-
     
     return render(request, "template.html", context)
 
@@ -99,3 +99,4 @@ def logout_user(request):
     response = HttpResponseRedirect(reverse('main:login'))
     response.delete_cookie('last_login')
     return response
+
