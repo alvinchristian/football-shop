@@ -596,6 +596,236 @@ Yaitu mencetak name, price, stock, category, brand, desc, dan jumblah sold
 
 <details>
 <summary> Tugas 4 </summary>
+
+## Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+
+Django AuthenticationForm adalah form bawaan dari django yang digunakan untuk melakukan authentikasi pada saat login. Kelebihan dari AuthenticationForm adalah karena merupakan bawwan django, simpel untuk di set up dan sudah aman. Kekurangannya adalah fiturnya yang minim sehingga tidak ada pilihan seperti remember me (walaupun bisa ditambahkan) dan memaksa kita untuk menggunakan User bawaan dari django. Jika kita ingin menggunakan User custom, maka harus ada yang diganti.
+
+## Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+
+Autentikasi adalah proses untuk memverifikasi identitas user (you're who you say you are) sedangkan otorisasi merupakan proses untuk memberifikasi apakah anda mempunyai akses untuk suatu hal. Untuk autentikasi kita bisa gunakan AuthenticationForm yang sudah dijelaskan di bagian sebelumnya sedangkan untuk otorisasi kita bisa menggunakan decorator seperti `@login_required`
+
+## Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+
+Session sendiri lebih lebih aman karena di store di server dan dapat menampung lebih banyak informasi. Sedangkan untuk cookies di store di client side sehingga kurang dan hanya dapat menyimpan sedikit informasi namun kelebihannya adalah cookies lebih ringan dan cepet sehingga tidak akan membenani server dibanding session yang bisa memakan memori yang lebih besar.  
+
+## Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+
+Secara default penggunaan cookies belum tentu aman, pertama cookies dapat diubah oleh semua orang, sehingga perlu ada check untuk integriti dari cookie tersebut. Untuk django, cookies disecure menggunakan signing menggunakan secret key sehingga jika ada yang diubah, maka signaturenya tidak akan cocok. Selain itu, cookies juga ada kemungkinan untuk dicuri lewat serangan seperti Cross-Site Scripting (XSS), di django cookies mempunyai default keamanan yaitu `SESSION_COOKIE_HTTPONLY` = True sehingga cookie tidak bisa di akses lewat javascript. 
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+1. Mengimplementasikan fungsi registrasi, login, dan logout untuk memungkinkan pengguna mengakses aplikasi sebelumnya sesuai dengan status login/logoutnya.
+
+Untuk ini kita cukup tambahkan 3 fungsi di `views.py`
+
+```python
+def register(request):
+    form = UserCreationForm()
+
+    if request.method == "POST":
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Your account has been successfully created!')
+            return redirect('main:login')
+    context = {'form':form}
+    return render(request, 'register.html', context)
+
+def login_user(request):
+    if request.method == 'POST':
+      form = AuthenticationForm(data=request.POST)
+      if form.is_valid():
+          user = form.get_user()
+          login(request, user)
+          response = HttpResponseRedirect(reverse('main:show_template'))
+          response.set_cookie('last_login', str(datetime.datetime.now()))
+          return response
+    else:
+        form = AuthenticationForm()
+        context = {'form':form}
+        return render(request, 'login.html', context)
+
+def logout_user(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse('main:login'))
+    response.delete_cookie('last_login')
+    return response
+
+``` 
+dan juga import 
+
+```python
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+```
+
+Setelah itu tinggal tambahin `@login_required(login_url='/login')` di fungsi yang ingin kita restrik
+
+
+2. Membuat dua (2) akun pengguna dengan masing-masing tiga (3) dummy data menggunakan model yang telah dibuat sebelumnya untuk setiap akun di lokal.
+
+Ini cukup register 2 akun terus masing-masing akun bikin 3 produk
+
+3. Menghubungkan model Product dengan User.
+
+Pertama-tama kita perlu mengimport User lalu menambahkan ```user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)``` ke products.
+
+Setelah itu kita tinggal modifikasi `show_template` agar mengambil username dari requestnya dan last_login dari cookies dan menambahkan functionality untuk filter berdasarkan all products or my products
+
+```python
+@login_required(login_url='/login')
+def show_template(request):
+    filter_type = request.GET.get('filter','all')
+    
+    if filter_type == 'all':
+        product_list = Products.objects.all()
+    else:
+        product_list = Products.objects.filter(user=request.user)
+    context = {
+        'shop': 'FullTime Gear',
+        'name': request.user.username,
+        'class': 'PBP F',
+        'products': product_list,
+        'last_login': request.COOKIES.get('last_login', 'Never')
+    }
+    
+    return render(request, "template.html", context)
+```
+
+dan `add_product` untuk membuat user product dari username yang membuatnya
+
+```python
+@login_required(login_url='/login')
+def add_product(request):
+    form = ProductsForm(request.POST or None)
+    if form.is_valid() and request.method == 'POST':
+        product_entry = form.save(commit=False)
+        product_entry.user = request.user
+        product_entry.save()
+        return redirect('main:show_template')
+    
+    context = {'form': form}
+    return render(request, 'add_product.html', context)
+```
+
+4. Menampilkan detail informasi pengguna yang sedang logged in seperti username dan menerapkan cookies seperti last_login pada halaman utama aplikasi.
+
+Untuk ini tinggal ambil context dari show_template lalu tambahkan ke html
+
+```html
+ {% extends 'base.html' %}
+ {% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ shop }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .header { text-align: center; margin-bottom: 20px; }
+        .add-button {
+            display: inline-block;
+            margin: 10px 0;
+            padding: 10px 20px;
+            background: dodgerblue;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        .add-button:hover { background: royalblue; }
+
+        /* Product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: auto;
+        }
+        .product-card {
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        .product-card img {
+            width: 250px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .product-card h2 {
+            margin: 8px 0;
+            font-size: 18px;
+        }
+        .price { font-weight: bold; color: green; margin: 5px 0; }
+        .featured {
+            color: #fff;
+            background: crimson;
+            padding: 3px 6px;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-left: 6px;
+        }
+        .details-button {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 8px 16px;
+            background: #0b5ed7;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .details-button:hover {
+            background: #084298;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ shop }}</h1>
+        <h5>Name: {{ name }}</h5>
+        <h5>Class: {{ class }}</h5>
+        <a href="{% url 'main:add_product' %}" class="add-button">Add Product</a>
+        <a href="{% url 'main:logout' %}" class="add-button">Logout</a>
+        <h5>Sesi terakhir login: {{ last_login }}</h5>
+        <a href="?filter=all" class="add-button">All Products</a>
+        <a href="?filter=my" class="add-button">My Products</a>
+    </div>
+
+    <div class="product-grid">
+        {% for product in products %}
+            <div class="product-card">
+                <img src="{{ product.thumbnail }}" alt="{{ product.name }}">
+                <h2>
+                    {{ product.name }}
+                    {% if product.is_featured %}
+                        <span class="featured">Featured</span>
+                    {% endif %}
+                </h2>
+                <p class="price">Rp {{ product.price }}</p>
+                <p><strong>Brand:</strong> {{ product.brand }}</p>
+                <p><strong>Stock:</strong> {{ product.stock }}</p>
+                <a href="{% url 'main:show_product' product.id %}" class="details-button">View Details</a>
+            </div>
+        {% empty %}
+            <p>No products available.</p>
+        {% endfor %}
+        
+    </div>
+</body>
+</html>
+{% endblock content %}
+```
+
+
+
 </details>
 
 
