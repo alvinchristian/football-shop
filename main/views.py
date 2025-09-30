@@ -62,6 +62,21 @@ def add_product(request):
     context = {'form': form}
     return render(request, 'add_product.html', context)
 
+def delete_product(request, id):
+    product = get_object_or_404(Products, id=id)
+    product.delete()
+    return redirect('main:show_template')
+
+def edit_product(request, id):
+    product = get_object_or_404(Products, id=id)
+    form = ProductsForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_template')
+    
+    context = {'form': form}
+    return render(request, 'edit_product.html', context)
+
 @login_required(login_url='/login')
 def show_product(request, id):
     product = get_object_or_404(Products, id=id)
