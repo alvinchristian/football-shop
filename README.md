@@ -1544,4 +1544,7 @@ berikut kode untuk navbar.html
 ```
 
 
+</details>
+
+
 
