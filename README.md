@@ -824,13 +824,724 @@ Untuk ini tinggal ambil context dari show_template lalu tambahkan ke html
 {% endblock content %}
 ```
 
-
-
 </details>
 
+<details>
+<summary> Tugas 5 </summary>
+
+## Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+
+Secara umum CSS memiliki 3 jenis, inline style, external dan internal style, dan browser default. Prioritasnya adalah inline style > external/internal style > browser default. Jika ada lebih dari 2 CSS dalam jenis CSS yang sama, maka selector CSS yang ditulis terbaru akan memiliki prioritas. Selain itu juga ada atribut !important yang dapat ditambahkan yang akan membuat selector tersebut memiliki prioritas tertinggi, lebih dari inline.
+
+## Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+
+Layout dan penampilan dari website kita tergantung dengan ukuran dan jenis display yang digunakan oleh perangkat pengguna. Penampilan yang rapih dan bagus untuk dilihat di laptop belum tentu rapih dan bagus di mobile karena dimensinya yang berbeda. Sehingga penting membuat responsive design agar design kita bisa menyesuaikan dengan dimensi display yang berbeda sehingga semua pengguna dapat memiliki pengalaman yang sama-sama baik. 
+
+Contoh yang paling mudah adalah navbar. Untuk mobile navbar sering kali menggunakan tombol "hamburger" yang akan mendisplay semua opsi ketika ditekan. Mengapa? Karena lebar dari perangkat mobile lebih kecil dipanding laptop atau tablet. Pada laptop kita bisa taruh semua opsinya langsung di navbar dan akan tetap terlihat rapih karena lebar display device kita. Namun apabila kita buat hal yang sama di mobile, maka antara satu opsi dengan opsi yang lain akan berdempetan atau bahkan bertimpaan karena kita mencoba memasukkan opsi yang banyak ke navbar yang memiliki lebar yang lebih pendek, maka untuk mengatasinya ditambahkan tombol yang akan mendisplay opsi secara vertikal dibanding horizontal
+
+## Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+
+Margin adalah jarak antara elemen satu dengan yang lain dan berwarna transparan. Contoh penggunaannya adalah :
+```css
+.box {
+  margin: 20px; /
+}
+```
+
+ini artinya .box akan memiliki jarak 20 pixel dari elemen yang lain
+
+Border adalah garis yang menggelilingi sebuah elemen dan dapat kita tambahkan warna, ketebalan, dan styling. Contoh pengunaannya adalah :
+```css
+.box {
+  border: 2px solid black;
+}
+```
+
+Ini artinya .box akan memiliki garis solid seukuran 2 pixel berwarna hitam disekelilingnya
+
+Padding adalah jarak antara konten elemen tersebut dengan bordernya. Contoh penggunaanya adalah :
+```css
+.box {
+  padding: 15px; 
+}
+```
+artinya antara isi dari .box dan bordernya memiliki jarak 15 pixel
+
+Berikut adalah visualisasinya (ref : https://blog.hubspot.com/website/css-margin-vs-padding)
+
+![](/images/margin-vs-padding-vs-border.webp)
+
+## Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+
+Flex box dan grid adalah sebuah modul css yang memungkinkan kita untuk mengatur layout dari website kita. Untuk grid, menggunakan sistem dua dimensi yaitu row dan coloumn. Oleh sebab itu, grid cocok untuk mengatur layout dua dimensi. Sedangkan untuk flexbox hanya bisa satu dimensi, row atau column sehingga cocok untuk layout 1 dimensi. Ref : https://www.geeksforgeeks.org/css/comparison-between-css-grid-css-flexbox/
+
+Untuk flex box terdapat 2 elemen yaitu flex container dan item, flex container adalah tempat menyimpan flex items. Flexbox juga memiliki property flex-direction yang dapat memudahkan kita untuk menentukan arah display dari flex item di dalam flex box tersebut. Ada 4 value: row, column, row-reverse, dan column reverse(ref : https://www.w3schools.com/css/css3_flexbox_container.asp)
+
+grid juga memiliki grid container dan item dengan konsep yang mirip. Di dalam grid container ada property grid-template-columns yang memungkinkan kita untuk mengatur ukuran-ukuran dari kolom di grid tersebut, hal yang sama juga ada untuk rows yaitu grid-template-rows (ref:https://www.w3schools.com/css/css_grid_container.asp)
+
+## Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+
+1. Implementasikan fungsi untuk menghapus dan mengedit product. 
+
+Untuk ini cukup menambahkan 2 fungsi ke `views.py`
+
+```python
+def delete_product(request, id):
+    product = get_object_or_404(Products, id=id)
+    product.delete()
+    return redirect('main:show_template')
+
+def edit_product(request, id):
+    product = get_object_or_404(Products, id=id)
+    form = ProductsForm(request.POST or None, instance=product)
+    if form.is_valid() and request.method == 'POST':
+        form.save()
+        return redirect('main:show_template')
+    
+    context = {'form': form}
+    return render(request, 'edit_product.html', context)
+```
+fungsi delete_product akan menghapus product dengan id `id` sedangkan untuk edit_product akan membuat form yang memungkinkan kita untuk mengedit detail dari product tersebut
+
+2. Kustomisasi halaman login, register, tambah product, edit product, dan detail product semenarik mungkin.
+
+Untuk styling saya menggunakan tailwind css, pertama-tama kita perlu tambahkan tailwind ke base.html
+
+```html
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    {% block meta %} {% endblock meta %}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}"/>
+  </head>
+  <body>
+    {% block content %} {% endblock content %}
+  </body>
+</html>
+```
+
+Setelah itu kita akan membuat folder `static` yang akan menyimpan css kita, di dalam folder tersebut kita akan buat `global.css`
+```css
+.form-style form input, form textarea, form select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 2px solid #bcbcbc;
+    border-radius: 0.375rem;
+}
+.form-style form input:focus, form textarea:focus, form select:focus {
+    outline: none;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px #16a34a;
+}
+
+.form-style input[type="checkbox"] {
+    width: 1.25rem;
+    height: 1.25rem;
+    padding: 0;
+    border: 2px solid #d1d5db;
+    border-radius: 0.375rem;
+    background-color: white;
+    cursor: pointer;
+    position: relative;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.form-style input[type="checkbox"]:checked {
+    background-color: #16a34a;
+    border-color: #16a34a;
+}
+
+.form-style input[type="checkbox"]:checked::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-weight: bold;
+    font-size: 0.875rem;
+}
+
+.form-style input[type="checkbox"]:focus {
+    outline: none;
+    border-color: #16a34a;
+    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.1);
+}
+```
+Di base.html sudah ada load static sehingga semua template yang mengextend base.html dapat menggunakan elemen css, kita tinggal mengubah html dari login, product detail, register, add product, dan edit product agar lebih menarik. Untuk sebagian besar, kodenya masih sama dengan tutorial namun untuk register dan login saya menambahkan fitur untuk show dan hide password menggunakan javascript. Berikut html untuk login
+
+```html
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Login - FullTime Gear</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="bg-gradient-to-br from-green-50 via-white to-green-100 w-full min-h-screen flex items-center justify-center p-8">
+  <div class="max-w-md w-full">
+    <div class="bg-white rounded-lg border border-gray-200 p-6 sm:p-8 form-style">
+      <div class="text-center mb-8">
+        <h1 class="text-2xl font-bold text-gray-900 mb-2">Sign In</h1>
+        <p class="text-gray-600">Welcome back to FullTime Gear</p>
+      </div>
+
+      
+      {% if form.non_field_errors %}
+        <div class="mb-6">
+          {% for error in form.non_field_errors %}
+            <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700">
+              {{ error }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% if form.errors %}
+        <div class="mb-6">
+          {% for field, errors in form.errors.items %}
+            {% if field != '__all__' %}
+              {% for error in errors %}
+                <div class="px-4 py-3 rounded-md text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
+                  <strong>{{ field|title }}:</strong> {{ error }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="POST" action="" class="space-y-6">
+        {% csrf_token %}
+        
+        <div>
+          <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+          <input 
+            id="username" 
+            name="username" 
+            type="text" 
+            required 
+            class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors" 
+            placeholder="Enter your username">
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+          <div class="relative">
+            <input 
+              id="password" 
+              name="password" 
+              type="password" 
+              required 
+              class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:border-green-500 transition-colors" 
+              placeholder="Enter your password">
+            
+            <button type="button" onclick="togglePassword()" 
+              class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600">
+
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#000000" aria-hidden="true" id="open-eye" height="16" width="16">
+                <path d="M8 10a2 2 0 1 0 0 -4 2 2 0 0 0 0 4Z" stroke-width="0.6667"></path>
+                <path fill-rule="evenodd" d="M0.8819999999999999 7.631333333333332C1.8739999999999999 4.650666666666666 4.6853333333333325 2.5 8.000666666666666 2.5c3.313333333333333 0 6.123333333333333 2.1486666666666663 7.116666666666667 5.126666666666667 0.07999999999999999 0.24133333333333332 0.07999999999999999 0.5013333333333333 0 0.742 -0.9913333333333334 2.9806666666666666 -3.8033333333333332 5.131333333333333 -7.117999999999999 5.131333333333333 -3.313333333333333 0 -6.124 -2.1486666666666663 -7.116666666666667 -5.126666666666667a1.1746666666666665 1.1746666666666665 0 0 1 0 -0.742ZM11.5 8a3.5 3.5 0 1 1 -7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" stroke-width="0.6667"></path>
+              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#000000" aria-hidden="true" id="close-eye" height="16" width="16" class="hidden">
+                <desc>
+                  Eye Slash Streamline Icon: https://streamlinehq.com
+                </desc>
+                <path d="M2.353333333333333 1.6466666666666667a0.5 0.5 0 0 0 -0.7066666666666667 0.7066666666666667l12 12a0.5 0.5 0 1 0 0.7066666666666667 -0.7066666666666667l-12 -12Zm12.764 6.7219999999999995a7.499333333333333 7.499333333333333 0 0 1 -1.7539999999999998 2.873333333333333l-2.066 -2.066a3.5 3.5 0 0 0 -4.473333333333333 -4.473333333333333L5.172666666666666 3.051333333333333a7.478 7.478 0 0 1 2.828 -0.5513333333333332c3.313333333333333 0 6.123333333333333 2.1486666666666663 7.116666666666667 5.126666666666667 0.07999999999999999 0.24133333333333332 0.07999999999999999 0.5013333333333333 0 0.742Z" stroke-width="0.6667"></path>
+                <path d="M10.5 8c0 0.12 -0.008666666666666666 0.238 -0.024666666666666663 0.35333333333333333l-2.829333333333333 -2.828666666666667A2.5 2.5 0 0 1 10.5 8Zm-2.1466666666666665 2.4753333333333334 -2.828666666666667 -2.829333333333333a2.5 2.5 0 0 0 2.829333333333333 2.828666666666667Z" stroke-width="0.6667"></path>
+                <path d="M4.5 8c0 -0.4126666666666666 0.07133333333333333 -0.8086666666666666 0.20266666666666666 -1.176l-2.0666666666666664 -2.0666666666666664a7.5 7.5 0 0 0 -1.7533333333333332 2.873333333333333c-0.07999999999999999 0.24133333333333332 -0.07999999999999999 0.5013333333333333 0 0.7426666666666667 0.9926666666666667 2.9779999999999998 3.802666666666666 5.126666666666667 7.116666666666667 5.126666666666667 1 0 1.9553333333333331 -0.19599999999999998 2.828 -0.5513333333333332l-1.651333333333333 -1.651333333333333A3.5 3.5 0 0 1 4.5 8Z" stroke-width="0.6667"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
 
 
+        <button 
+          type="submit" 
+          class="w-full bg-green-600 text-white font-medium py-3 px-4 rounded-md hover:bg-green-700 transition-colors">
+          Sign In
+        </button>
+      </form>
 
+      
+      {% if messages %}
+        <div class="mt-6">
+          {% for message in messages %}
+            <div 
+              class="
+                px-4 py-3 rounded-md text-sm border mb-2
+                {% if message.tags == 'success' %}
+                  bg-green-50 border-green-200 text-green-700
+                {% elif message.tags == 'error' %}
+                  bg-red-50 border-red-200 text-red-700
+                {% else %}
+                  bg-gray-50 border-gray-200 text-gray-700
+                {% endif %}
+              ">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+     
+      <div class="mt-6 text-center pt-6 border-t border-gray-200">
+        <p class="text-gray-500 text-sm">
+          Don't have an account? 
+          <a href="{% url 'main:register' %}" class="text-green-600 hover:text-green-700 font-medium">
+            Register Now
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function togglePassword() {
+    const input = document.getElementById("password");
+    const openEye = document.getElementById("open-eye");
+    const closeEye = document.getElementById("close-eye");
+
+    if (input.type === "password") {
+      input.type = "text";
+      openEye.classList.add("hidden");
+      closeEye.classList.remove("hidden");
+    } else {
+      input.type = "password";
+      closeEye.classList.add("hidden");
+      openEye.classList.remove("hidden");
+    }
+  }
+</script>
+{% endblock content %}
+```
+
+Selain itu saya juga menambahkan gradient pada background
+
+Untuk product_detail.html saya memodifikasi dikit agar thumbnailnya dapat selalu terlihat secara penuh dan berada di tengah dan menambahkan border hijau.
+
+```html
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>{{ product.name }} - FullTime Gear</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="bg-gray-50 w-full min-h-screen">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Back Navigation -->
+        <div class="mb-6">
+            <a href="{% url 'main:show_template' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+                ← Back to Products
+            </a>
+        </div>
+        
+        <!-- Product -->
+        <article class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+            
+            <!-- Header -->
+            <div class="p-6 sm:p-8">
+                <div class="flex flex-wrap items-center gap-2 mb-4">
+                    {% if product.is_featured %}
+                        <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-600 text-white">
+                            Featured
+                        </span>
+                    {% endif %}
+                </div>
+                
+                <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 leading-tight mb-4">
+                    {{ product.name }}
+                </h1>
+                
+                <div class="flex flex-wrap items-center text-sm text-gray-500 gap-4">
+                    <span class="text-green-600 font-semibold text-lg">Rp {{ product.price }}</span>
+                    <span>Stock: {{ product.stock }}</span>
+                </div>
+            </div>
+
+            <!-- Product Image -->
+            {% if product.thumbnail %}
+                <div class="px-6 sm:px-8 flex justify-center items-center">
+                    <img src="{{ product.thumbnail }}" 
+                        alt="{{ product.name }}" 
+                        class="max-h-96 w-auto object-contain rounded-lg">
+                </div>
+            {% endif %}
+
+            <!-- Product Description -->
+            <div class="p-6 sm:p-8">
+                <div class="prose prose-lg max-w-none">
+                    <div class="text-gray-700 leading-relaxed whitespace-pre-line text-base sm:text-lg">
+                        {{ product.description }}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extra Info -->
+            <div class="border-t border-gray-200 p-6 sm:p-8 bg-gray-50">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="font-medium text-gray-900">
+                            Brand: {{ product.brand }}
+                        </p>
+                        {% if product.user %}
+                            <p class="text-sm text-gray-500">Added by {{ product.user.username }}</p>
+                        {% else %}
+                            <p class="text-sm text-gray-500">Added by Anonymous</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+</div>
+{% endblock content %}
+
+```
+
+3. Kustomisasi halaman daftar product menjadi lebih menarik dan responsive. Kemudian, perhatikan kondisi berikut:
+ Jika pada aplikasi belum ada product yang tersimpan, halaman daftar product akan menampilkan gambar dan pesan bahwa belum ada product yang terdaftar.
+ Jika sudah ada product yang tersimpan, halaman daftar product akan menampilkan detail setiap product dengan menggunakan card (tidak boleh sama persis dengan desain pada Tutorial!).
+
+
+Pertama-tama kita buat product_card.css, isi dari css ini hanya css dari kode saya untuk tugas 2 (yang dibuat oleh AI), pada awalnya css tersebut masih inline, sekarang agar lebih rapih saya pindahkan ke static files, berikut kodenya
+
+```css
+body {
+  font-family: Arial, sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.add-button {
+  display: inline-block;
+  margin: 10px 0;
+  padding: 10px 20px;
+  background: #16a34a; 
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+.add-button:hover {
+  background: #15803d;
+}
+
+/* Product grid */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.product-card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  background: white;
+}
+
+.product-card img {
+  max-width: 100%;
+  max-height: 200px;   /* limit height */
+  width: auto;         /* scale proportionally */
+  height: auto;
+  object-fit: contain; /* make sure full image is visible */
+  display: block;
+  margin: 0 auto 12px; /* center horizontally + add bottom margin */
+}
+
+.product-card h2 {
+  margin: 8px 0;
+  font-size: 18px;
+}
+
+.price {
+  font-weight: bold;
+  color: #16a34a; 
+  margin: 5px 0;
+}
+
+.featured {
+  color: #fff;
+  background: #15803d; 
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.details-button {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #16a34a; 
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+.details-button:hover {
+  background: #15803d; 
+}
+```
+Setelah itu saya buat product_card.html yaitu html untuk product card yang akan menggunakan css dari product_card.css, berikut kodenya
+```html
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/product_card.css' %}">
+
+<article class="product-card">
+  <!-- Thumbnail -->
+  {% if product.thumbnail %}
+    <img src="{{ product.thumbnail }}" alt="{{ product.name }}">
+  {% else %}
+    <div class="w-full h-48 bg-gray-200 rounded-md"></div>
+  {% endif %}
+
+  <!-- Title -->
+  <h2>
+    {{ product.name }}
+    {% if product.is_featured %}
+      <span class="featured">Featured</span>
+    {% endif %}
+  </h2>
+
+  <!-- Price / Stock -->
+  <p class="price">Rp {{ product.price }}</p>
+  <p><strong>Brand:</strong> {{ product.brand }}</p>
+  <p><strong>Stock:</strong> {{ product.stock }}</p>
+
+  <!-- Action Buttons -->
+  <div class="mt-4 flex justify-center space-x-3">
+    <a href="{% url 'main:show_product' product.id %}" class="details-button">View Details</a>
+    {% if user.is_authenticated and product.user == user %}
+      <a href="{% url 'main:edit_product' product.id %}" class="details-button">Edit</a>
+      <a href="{% url 'main:delete_product' product.id %}" class="details-button" style="background:#dc2626;">Delete</a>
+    {% endif %}
+  </div>
+</article>
+
+```
+Untuk tombol delete, saya kasih background merah agar berbeda dengan edit supaya meminimalisir kemungkinan salah pencet oleh user. Terakhir tinggal memodifikasi template.html agar menggunakan product_card.html
+
+```html
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>FullTime Gear - Products</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+<div class="bg-gray-50 w-full pt-16 min-h-screen">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Header Section -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">Football Products</h1>
+      <p class="text-gray-600">Browse and shop the best football gear</p>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 bg-white rounded-lg border border-gray-200 p-4">
+      <div class="flex space-x-3 mb-4 sm:mb-0">
+        <a href="?" class="{% if request.GET.filter == 'all' or not request.GET.filter %} bg-green-600 text-white{% else %} bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white">
+          All Products
+        </a>
+        <a href="?filter=my" class="{% if request.GET.filter == 'my' %} bg-green-600 text-white{% else %} bg-white text-gray-700 border border-gray-300{% endif %} px-4 py-2 rounded-md font-medium transition-colors hover:bg-green-600 hover:text-white">
+          My Products
+        </a>
+      </div>
+      {% if user.is_authenticated %}
+        <div class="text-sm text-gray-500">
+          Last login: {{ last_login }}
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Product Grid -->
+    {% if not products %}
+      <div class="bg-white rounded-lg border border-gray-200 p-12 text-center">
+        <div class="w-32 h-32 mx-auto mb-4">
+          <img src="{% static 'images/no-product.png' %}" alt="No products available" class="w-full h-full object-contain">
+        </div>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+        <p class="text-gray-500 mb-6">Be the first to add a product.</p>
+        <a href="{% url 'main:add_product' %}" class="inline-flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors">
+          Add Product
+        </a>
+      </div>
+    {% else %}
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for product in products %}
+          {% include 'product_card.html' with product=product %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock content %}
+
+```
+untuk no-product.png saya membuat folder baru di dalam static bernama images dan menggunakan gambar berikut
+![](/static/images/no-product.png)
+
+
+4. Untuk setiap card product, buatlah dua buah button untuk mengedit dan menghapus product pada card tersebut!
+
+Untuk kodenya sudah ada di kode product_card.html di nomor sebelumnya, berikut snippet kode untuk tombolnya :
+```html
+    {% if user.is_authenticated and product.user == user %}
+      <a href="{% url 'main:edit_product' product.id %}" class="details-button">Edit</a>
+      <a href="{% url 'main:delete_product' product.id %}" class="details-button" style="background:#dc2626;">Delete</a>
+    {% endif %}
+```
+
+tombol ini hanya akan muncul jika user sudah terautentikasi (logged in) and merupakan orang yang menambahkan produk tersebut (if user.is_authenticated and product.user == user)
+
+5. Buatlah navigation bar (navbar) untuk fitur-fitur pada aplikasi yang responsive terhadap perbedaan ukuran device, khususnya mobile dan desktop.
+
+Untuk navbar saya masih menggunakan navbar yang dari tutorial, untuk mengimplementasikannya kita hanya perlu membuat `navbar.html` (di folder yang sama dengan `base.html`) lalu menambahkannya ke `template.html`
+
+```html
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta %}
+<title>FullTime Gear - Products</title>
+{% endblock meta %}
+
+{% block content %}
+{% include 'navbar.html' %}
+```
+
+berikut kode untuk navbar.html
+
+```html
+<nav class="fixed top-0 left-0 w-full bg-white border-b border-gray-200 shadow-sm z-50">
+  <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+      
+      <!-- Logo / Branding -->
+      <div class="flex items-center">
+        <h1 class="text-xl font-semibold text-gray-900">
+          <span class="text-green-600">FullTime</span> Gear
+        </h1>
+      </div>
+      
+      <!-- Desktop Navigation -->
+      <div class="hidden md:flex items-center space-x-8">
+        <a href="{% url 'main:show_template' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+          Home
+        </a>
+        <a href="{% url 'main:add_product' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+          Add Product
+        </a>
+      </div>
+      
+      <!-- Desktop User Section -->
+      <div class="hidden md:flex items-center space-x-6">
+        {% if user.is_authenticated %}
+          <div class="text-right">
+            <div class="text-sm font-medium text-gray-900">{{ name|default:user.username }}</div>
+            <div class="text-xs text-gray-500">{{ class|default:"PBP F" }}</div>
+          </div>
+          <a href="{% url 'main:logout' %}" class="text-red-600 hover:text-red-700 font-medium transition-colors">
+            Logout
+          </a>
+        {% else %}
+          <a href="{% url 'main:login' %}" class="text-gray-600 hover:text-gray-900 font-medium transition-colors">
+            Login
+          </a>
+          <a href="{% url 'main:register' %}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded font-medium transition-colors">
+            Register
+          </a>
+        {% endif %}
+      </div>
+      
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden flex items-center">
+        <button class="mobile-menu-button p-2 text-gray-600 hover:text-gray-900 transition-colors">
+          <span class="sr-only">Open menu</span>
+          <div class="w-6 h-6 flex flex-col justify-center items-center">
+            <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm"></span>
+            <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm my-0.5"></span>
+            <span class="bg-current block transition-all duration-300 ease-out h-0.5 w-6 rounded-sm"></span>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Mobile Menu -->
+  <div class="mobile-menu hidden md:hidden bg-white border-t border-gray-200">
+    <div class="px-6 py-4 space-y-4">
+      
+      <!-- Mobile Navigation Links -->
+      <div class="space-y-1">
+        <a href="{% url 'main:show_template' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
+          Home
+        </a>
+        <a href="{% url 'main:add_product' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
+          Add Product
+        </a>
+      </div>
+      
+      <!-- Mobile User Section -->
+      <div class="border-t border-gray-200 pt-4">
+        {% if user.is_authenticated %}
+          <div class="mb-4">
+            <div class="font-medium text-gray-900">{{ name|default:user.username }}</div>
+            <div class="text-sm text-gray-500">{{ class|default:"PBP F" }}</div>
+          </div>
+          <a href="{% url 'main:logout' %}" class="block text-red-600 hover:text-red-700 font-medium py-3 transition-colors">
+            Logout
+          </a>
+        {% else %}
+          <div class="space-y-3">
+            <a href="{% url 'main:login' %}" class="block text-gray-600 hover:text-gray-900 font-medium py-3 transition-colors">
+              Login
+            </a>
+            <a href="{% url 'main:register' %}" class="block bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded text-center transition-colors">
+              Register
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    const btn = document.querySelector("button.mobile-menu-button");
+    const menu = document.querySelector(".mobile-menu");
+
+    btn.addEventListener("click", () => {
+      menu.classList.toggle("hidden");
+    });
+  </script>
+</nav>
+
+```
 
 
 

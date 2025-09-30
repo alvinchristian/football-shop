@@ -17,7 +17,7 @@
         </div>
         
         <!-- Product -->
-        <article class="bg-white rounded-lg border border-gray-200 overflow-hidden">
+        <article class="bg-white rounded-lg border-4 border-green-600 overflow-hidden">
             
             <!-- Header -->
             <div class="p-6 sm:p-8">
@@ -41,10 +41,10 @@
 
             <!-- Product Image -->
             {% if product.thumbnail %}
-                <div class="px-6 sm:px-8">
+                <div class="px-6 sm:px-8 flex justify-center items-center">
                     <img src="{{ product.thumbnail }}" 
-                         alt="{{ product.name }}" 
-                         class="w-full h-64 sm:h-80 lg:h-96 object-cover rounded-lg">
+                        alt="{{ product.name }}" 
+                        class="max-h-96 w-auto object-contain rounded-lg">
                 </div>
             {% endif %}
 
