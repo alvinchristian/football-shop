@@ -1543,7 +1543,7 @@ berikut kode untuk navbar.html
 
 ```
 
-
+Disclaimer: Kode html dan css dibuat dengan bantuan dari AI.
 </details>
 
 
