@@ -1546,5 +1546,29 @@ berikut kode untuk navbar.html
 Disclaimer: Kode html dan css dibuat dengan bantuan dari AI.
 </details>
 
+<details>
+<summary> Tugas 6 </summary>
+
+## Apa perbedaan antara synchronous request dan asynchronous request?
+Dalam synchornous request, browser atau DOM tidak dapat menjalankan kode sampai requestnya selesai sedangkan asynchornous request browser atau DOM akan langsung menjalankan kode tanpa menunggu requestnya
+
+## Bagaimana AJAX bekerja di Django (alur request–response)?
+1. User menjalankan suatu aksi (e.g pencet tombol)
+2. Sebuah http request dikirim ke endpoint yang korespon ke aksi tersebut
+3. kode di `views.py` yang sesuai dengan endpoint dijalankan
+4. Server membuat response dan mengirim balik data ke browser
+5. JS di browser memproses data yang diterima kemudian mengupdate isi dari page
+
+##  Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+AJAX lebih ringan dalam bandwith karena hanya mengirim data dibanding 1 kode html penuh, kemudian akan membuat website lebih cepat karena yang berubah hanya bagian yang diubah dan tidak perlu reload satu halaman.
+
+## Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+Selalu lakukan sanitasi input pengguna misalnya menggunakan DOMpurify atau strip tags. Kemudian jangan menambahkan csrf_excempt di login dan register agar ada proteksi dari CSRF
+
+## Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
+UX pada website akan terlihat lebih mulus dan cepat karena browser tidak perlu me-reload satu halaman secara keseluruhan. Kita juga dapat menambahkan kode seperti toast yang akan muncul tanpa harus menunggu response selesai berkat sifat asynchrounous dari ajax sehingga bagi user lebih mulus.
+</details>
+
+
 
 

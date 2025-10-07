@@ -9,73 +9,31 @@
   <div class="bg-gradient-to-br from-green-50 via-white to-green-100 w-full min-h-screen flex items-center justify-center p-8">
     <div class="max-w-md w-full relative z-10">
       <div class="bg-white border border-gray-200 rounded-lg p-8 shadow-sm">
-      <div class="text-center mb-8">
-        <h2 class="text-2xl font-semibold text-gray-900 mb-2">Join Us</h2>
-        <p class="text-gray-500">Create your FullTime Gear account</p>
-      </div>
-
-
-      {% if form.non_field_errors %}
-        <div class="mb-6">
-          {% for error in form.non_field_errors %}
-            <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700">
-              {{ error }}
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      {% if form.errors %}
-        <div class="mb-6">
-          {% for field, errors in form.errors.items %}
-            {% if field != '__all__' %}
-              {% for error in errors %}
-                <div class="px-4 py-3 rounded text-sm border bg-red-50 border-red-200 text-red-700 mb-2">
-                  <strong>
-                    {% if field == "password1" or field == "password2" %}
-                      Password
-                    {% else %}
-                      {{ field|title }}
-                    {% endif %}
-                    :
-                  </strong> {{ error }}
-                </div>
-              {% endfor %}
-            {% endif %}
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="POST" action="" class="space-y-5">
-        {% csrf_token %}
-        
-
-        <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
-          <input 
-            id="username" 
-            name="username" 
-            type="text" 
-            required 
-            class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200" 
-            placeholder="Choose a username">
+        <div class="text-center mb-8">
+          <h2 class="text-2xl font-semibold text-gray-900 mb-2">Join Us</h2>
+          <p class="text-gray-500">Create your FullTime Gear account</p>
         </div>
 
-        <div>
-          <label for="password1" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-          <div class="relative">
-            <input 
-              id="password1" 
-              name="password1" 
-              type="password" 
-              required 
-              class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200" 
-              placeholder="Create a password">
-            <button type="button" onclick="togglePassword('password1', 'open-eye1', 'close-eye1')" 
-              class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600">
-              
+        <!-- Register Form -->
+        <form id="registerForm" method="POST" class="space-y-5">
+          {% csrf_token %}
 
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#000000" aria-hidden="true" id="open-eye1" height="16" width="16">
+          <div>
+            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+            <input id="username" name="username" type="text" required
+              class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200"
+              placeholder="Choose a username">
+          </div>
+
+          <div>
+            <label for="password1" class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+            <div class="relative">
+              <input id="password1" name="password1" type="password" required
+                class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200"
+                placeholder="Create a password">
+              <button type="button" onclick="togglePassword('password1', 'open-eye1', 'close-eye1')"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600">
+                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#000000" aria-hidden="true" id="open-eye1" height="16" width="16">
                 <path d="M8 10a2 2 0 1 0 0 -4 2 2 0 0 0 0 4Z" stroke-width="0.6667"></path>
                 <path fill-rule="evenodd" d="M0.8819999999999999 7.631333333333332C1.8739999999999999 4.650666666666666 4.6853333333333325 2.5 8.000666666666666 2.5c3.313333333333333 0 6.123333333333333 2.1486666666666663 7.116666666666667 5.126666666666667 0.07999999999999999 0.24133333333333332 0.07999999999999999 0.5013333333333333 0 0.742 -0.9913333333333334 2.9806666666666666 -3.8033333333333332 5.131333333333333 -7.117999999999999 5.131333333333333 -3.313333333333333 0 -6.124 -2.1486666666666663 -7.116666666666667 -5.126666666666667a1.1746666666666665 1.1746666666666665 0 0 1 0 -0.742ZM11.5 8a3.5 3.5 0 1 1 -7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" stroke-width="0.6667"></path>
               </svg>
@@ -88,25 +46,19 @@
                 <path d="M10.5 8c0 0.12 -0.008666666666666666 0.238 -0.024666666666666663 0.35333333333333333l-2.829333333333333 -2.828666666666667A2.5 2.5 0 0 1 10.5 8Zm-2.1466666666666665 2.4753333333333334 -2.828666666666667 -2.829333333333333a2.5 2.5 0 0 0 2.829333333333333 2.828666666666667Z" stroke-width="0.6667"></path>
                 <path d="M4.5 8c0 -0.4126666666666666 0.07133333333333333 -0.8086666666666666 0.20266666666666666 -1.176l-2.0666666666666664 -2.0666666666666664a7.5 7.5 0 0 0 -1.7533333333333332 2.873333333333333c-0.07999999999999999 0.24133333333333332 -0.07999999999999999 0.5013333333333333 0 0.7426666666666667 0.9926666666666667 2.9779999999999998 3.802666666666666 5.126666666666667 7.116666666666667 5.126666666666667 1 0 1.9553333333333331 -0.19599999999999998 2.828 -0.5513333333333332l-1.651333333333333 -1.651333333333333A3.5 3.5 0 0 1 4.5 8Z" stroke-width="0.6667"></path>
               </svg>
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
 
-
-        <div>
-          <label for="password2" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
-          <div class="relative">
-            <input 
-              id="password2" 
-              name="password2" 
-              type="password" 
-              required 
-              class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200" 
-              placeholder="Confirm your password">
-            <button type="button" onclick="togglePassword('password2', 'open-eye2', 'close-eye2')" 
-              class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#000000" aria-hidden="true" id="open-eye2" height="16" width="16">
+          <div>
+            <label for="password2" class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+            <div class="relative">
+              <input id="password2" name="password2" type="password" required
+                class="w-full px-4 py-3 border border-gray-300 rounded focus:outline-none focus:border-green-500 transition duration-200"
+                placeholder="Confirm your password">
+              <button type="button" onclick="togglePassword('password2', 'open-eye2', 'close-eye2')"
+                class="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="#000000" aria-hidden="true" id="open-eye2" height="16" width="16">
                 <path d="M8 10a2 2 0 1 0 0 -4 2 2 0 0 0 0 4Z" stroke-width="0.6667"></path>
                 <path fill-rule="evenodd" d="M0.8819999999999999 7.631333333333332C1.8739999999999999 4.650666666666666 4.6853333333333325 2.5 8.000666666666666 2.5c3.313333333333333 0 6.123333333333333 2.1486666666666663 7.116666666666667 5.126666666666667 0.07999999999999999 0.24133333333333332 0.07999999999999999 0.5013333333333333 0 0.742 -0.9913333333333334 2.9806666666666666 -3.8033333333333332 5.131333333333333 -7.117999999999999 5.131333333333333 -3.313333333333333 0 -6.124 -2.1486666666666663 -7.116666666666667 -5.126666666666667a1.1746666666666665 1.1746666666666665 0 0 1 0 -0.742ZM11.5 8a3.5 3.5 0 1 1 -7 0 3.5 3.5 0 0 1 7 0Z" clip-rule="evenodd" stroke-width="0.6667"></path>
               </svg>
@@ -119,65 +71,81 @@
                 <path d="M10.5 8c0 0.12 -0.008666666666666666 0.238 -0.024666666666666663 0.35333333333333333l-2.829333333333333 -2.828666666666667A2.5 2.5 0 0 1 10.5 8Zm-2.1466666666666665 2.4753333333333334 -2.828666666666667 -2.829333333333333a2.5 2.5 0 0 0 2.829333333333333 2.828666666666667Z" stroke-width="0.6667"></path>
                 <path d="M4.5 8c0 -0.4126666666666666 0.07133333333333333 -0.8086666666666666 0.20266666666666666 -1.176l-2.0666666666666664 -2.0666666666666664a7.5 7.5 0 0 0 -1.7533333333333332 2.873333333333333c-0.07999999999999999 0.24133333333333332 -0.07999999999999999 0.5013333333333333 0 0.7426666666666667 0.9926666666666667 2.9779999999999998 3.802666666666666 5.126666666666667 7.116666666666667 5.126666666666667 1 0 1.9553333333333331 -0.19599999999999998 2.828 -0.5513333333333332l-1.651333333333333 -1.651333333333333A3.5 3.5 0 0 1 4.5 8Z" stroke-width="0.6667"></path>
               </svg>
-            </button>
-          </div>
-        </div>
 
-        <button 
-          type="submit" 
-          class="w-full bg-green-600 text-white font-medium py-3 px-4 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200">
-          Create Account
-        </button>
-      </form>
-
-      {% if messages %}
-        <div class="mt-6">
-          {% for message in messages %}
-            <div 
-              class="
-                px-4 py-3 rounded text-sm border
-                {% if message.tags == 'success' %}
-                  bg-green-50 border-green-200 text-green-700
-                {% elif message.tags == 'error' %}
-                  bg-red-50 border-red-200 text-red-700
-                {% else %}
-                  bg-gray-50 border-gray-200 text-gray-700
-                {% endif %}
-              ">
-              {{ message }}
+              </button>
             </div>
-          {% endfor %}
-        </div>
-      {% endif %}
+          </div>
 
-      <div class="mt-6 text-center">
-        <p class="text-gray-500 text-sm">
-          Already have an account? 
-          <a href="{% url 'main:login' %}" class="text-green-600 hover:text-green-700 font-medium">
-            Sign In
-          </a>
-        </p>
-      </div>
+          <button type="submit" id="submitBtn"
+            class="w-full bg-green-600 text-white font-medium py-3 px-4 rounded hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200">
+            Create Account
+          </button>
+        </form>
+
+        <div class="mt-6 text-center">
+          <p class="text-gray-500 text-sm">
+            Already have an account?
+            <a href="{% url 'main:login' %}" class="text-green-600 hover:text-green-700 font-medium">
+              Sign In
+            </a>
+          </p>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<script>
-  function togglePassword(inputId, openId, closeId) {
-    const input = document.getElementById(inputId);
-    const openEye = document.getElementById(openId);
-    const closeEye = document.getElementById(closeId);
 
-    if (input.type === "password") {
-      input.type = "text";
-      openEye.classList.add("hidden");
-      closeEye.classList.remove("hidden");
-    } else {
-      input.type = "password";
-      closeEye.classList.add("hidden");
-      openEye.classList.remove("hidden");
-    }
+<script>
+function togglePassword(inputId, openId, closeId) {
+  const input = document.getElementById(inputId);
+  const openEye = document.getElementById(openId);
+  const closeEye = document.getElementById(closeId);
+  if (input.type === "password") {
+    input.type = "text";
+    openEye.classList.add("hidden");
+    closeEye.classList.remove("hidden");
+  } else {
+    input.type = "password";
+    closeEye.classList.add("hidden");
+    openEye.classList.remove("hidden");
   }
+}
+
+// --- AJAX Registration ---
+document.getElementById("registerForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const form = e.target;
+  const submitBtn = document.getElementById("submitBtn");
+  submitBtn.disabled = true;
+  submitBtn.textContent = "Registering...";
+
+  const formData = new FormData(form);
+
+  try {
+    const res = await fetch("{% url 'main:register' %}", {
+      method: "POST",
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+      body: formData
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      showToast('Registration Successful', 'Account Created', 'success');
+      setTimeout(() => window.location.href = "{% url 'main:login' %}", 2000);
+    } else {
+      const firstError = data.errors
+        ? Object.values(data.errors)[0][0]
+        : "Please check your input.";
+      showToast('Registration Failed', firstError, 'error');
+    }
+  } catch (err) {
+    showToast("Network Error", "Could not connect to the server.", "error");
+  }
+
+  submitBtn.disabled = false;
+  submitBtn.textContent = "Create Account";
+});
 </script>
 {% endblock content %}
