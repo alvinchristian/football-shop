@@ -19,4 +19,7 @@ urlpatterns = [
     path('add_ajax/', add_product_ajax, name='add_product_ajax'),
     path('edit_ajax/<uuid:id>/', edit_product_ajax, name='edit_product_ajax'),
     path('delete_ajax/<uuid:id>/', delete_product_ajax, name='delete_product_ajax'),
+    path('proxy-image/', proxy_image, name='proxy_image'),
+    path('create-flutter/', create_product_flutter, name='create_product_flutter'),
+    path('my-products-flutter/', flutter_list_user_products, name='list_user_products_flutter'),
 ]

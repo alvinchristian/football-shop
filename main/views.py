@@ -13,6 +13,8 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.utils.html import strip_tags
+import requests
+import json
 # Create your views here.
 @login_required(login_url='/login')
 def show_template(request):
@@ -213,3 +215,75 @@ def delete_product_ajax(request, id):
         return HttpResponse(b"DELETED", status=200)
     return HttpResponse(b"METHOD NOT ALLOWED", status=405)
 
+def proxy_image(request):
+    image_url = request.GET.get('url')
+    if not image_url:
+        return HttpResponse('No URL provided', status=400)
+    
+    try:
+        # Fetch image from external source
+        response = requests.get(image_url, timeout=10)
+        response.raise_for_status()
+        
+        # Return the image with proper content type
+        return HttpResponse(
+            response.content,
+            content_type=response.headers.get('Content-Type', 'image/jpeg')
+        )
+    except requests.RequestException as e:
+        return HttpResponse(f'Error fetching image: {str(e)}', status=500)
+
+@csrf_exempt
+def create_product_flutter(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = strip_tags(data.get("name", ""))  # Strip HTML tags
+        description = strip_tags(data.get("description", ""))  # Strip HTML tags
+        category = data.get("category", "")
+        thumbnail = data.get("thumbnail", "")
+        is_featured = data.get("is_featured", False)
+        price = int(data.get("price", 0))
+        stock = int(data.get("stock", 0))
+        brand = strip_tags(data.get("brand", ""))  # Strip HTML tags
+        user = request.user
+        
+        new_product = Products(
+            name=name, 
+            description=description,
+            category=category,
+            thumbnail=thumbnail,
+            is_featured=is_featured,
+            user=user,
+            price=price,
+            stock=stock,
+            brand=brand
+        )
+        new_product.save()
+        
+        return JsonResponse({"status": "success"}, status=200)
+    else:
+        return JsonResponse({"status": "error"}, status=401)
+
+@login_required
+def flutter_list_user_products(request):
+    # filter by logged-in user
+    products = Products.objects.filter(user=request.user)
+
+    data = [
+        {
+            'id': str(product.id),
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'thumbnail': product.thumbnail,
+            'category': product.category,
+            'is_featured': product.is_featured,
+            'brand': product.brand,
+            'sold': product.sold,
+            'stock': product.stock,
+            'user': product.user.username if product.user else None,
+        }
+        for product in products
+    ]
+
+    return JsonResponse(data, safe=False)
